@@ -1,0 +1,21 @@
+{
+  "name": "hartley-webb-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create hartley-webb",
+    "db:migrate": "wrangler d1 execute DB --file=migrations/0001_schema.sql --remote",
+    "db:seed": "wrangler d1 execute DB --file=migrations/seed.sql --remote",
+    "db:setup": "npm run db:migrate && npm run db:seed"
+  },
+  "dependencies": {
+    "hono": "^4.4.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240725.0",
+    "typescript": "^5.5.2",
+    "wrangler": "^3.65.0"
+  }
+}
