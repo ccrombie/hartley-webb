@@ -4,6 +4,7 @@ import { api } from '../lib/api'
 import type { Product, Inventory } from '../lib/api'
 import { useBasket } from '../context/BasketContext'
 import { ShoppingBagIcon, ChevronLeftIcon, CheckIcon } from '@heroicons/react/24/outline'
+import { getProductImage } from '../lib/productImages'
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>()
@@ -68,12 +69,22 @@ export default function ProductDetail() {
       </Link>
 
       <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
-        {/* Image placeholder */}
-        <div className="bg-gray-100 aspect-square flex items-center justify-center text-gray-300">
-          <svg className="w-24 h-24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
+        {/* Product image */}
+        {getProductImage(product.id) ? (
+          <div className="aspect-square overflow-hidden bg-gray-50">
+            <img
+              src={getProductImage(product.id)}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="bg-gray-100 aspect-square flex items-center justify-center text-gray-300">
+            <svg className="w-24 h-24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        )}
 
         {/* Details */}
         <div className="flex flex-col">
