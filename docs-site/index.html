@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hartley &amp; Webb — Developer API</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    :root {
+      --sidebar-w: 260px;
+      --navy: #0b1e33;
+      --navy-light: #132840;
+      --amber: #d97706;
+      --amber-light: #fef3c7;
+      --amber-border: #fcd34d;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #ffffff;
+      --bg-subtle: #f8fafc;
+      --green: #059669;
+      --green-bg: #d1fae5;
+      --purple: #7c3aed;
+      --font: 'Inter', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Layout ─────────────────────────────── */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--navy);
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .sidebar-logo .wordmark {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .sidebar-logo .wordmark em {
+      font-style: normal;
+      color: var(--amber);
+    }
+
+    .sidebar-logo .tag {
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 3px;
+    }
+
+    .nav-group { padding: 20px 0 4px; }
+
+    .nav-group-title {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0 20px 8px;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 6px 20px;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      font-size: 13px;
+      border-left: 2px solid transparent;
+      transition: color 0.12s, background 0.12s;
+    }
+
+    .nav-link:hover { color: rgba(255,255,255,0.9); }
+
+    .nav-link.active {
+      color: #fff;
+      border-left-color: var(--amber);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .nav-link.sub {
+      padding-left: 32px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .nav-link.sub.active { color: rgba(255,255,255,0.9); }
+
+    /* ── Main ───────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      max-width: 820px;
+      padding: 64px 72px 100px;
+    }
+
+    /* ── Hero ───────────────────────────────── */
+    .hero { margin-bottom: 64px; }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 500px;
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+
+    .base-url-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 18px;
+    }
+
+    .base-url-pill .label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: var(--border);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .base-url-pill .url {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .info-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .info-card .ic-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 4px;
+    }
+
+    .info-card .ic-value {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    /* ── Section ────────────────────────────── */
+    .section {
+      padding-top: 20px;
+      margin-bottom: 64px;
+      border-top: 1px solid var(--border);
+    }
+
+    .section:first-of-type { border-top: none; }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      margin-bottom: 32px;
+      max-width: 560px;
+    }
+
+    /* ── Endpoint ───────────────────────────── */
+    .endpoint { margin-bottom: 52px; }
+
+    .endpoint-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .method {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 3px 9px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+
+    .get { color: var(--green); background: var(--green-bg); }
+
+    .path {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .endpoint-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .endpoint-desc { color: var(--muted); margin-bottom: 20px; }
+
+    /* ── Params table ───────────────────────── */
+    .params-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 8px;
+    }
+
+    table.params {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table.params th {
+      text-align: left;
+      padding: 8px 14px;
+      background: var(--bg-subtle);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.params td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    table.params tr:last-child td { border-bottom: none; }
+
+    table.params td:first-child {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--purple);
+      white-space: nowrap;
+    }
+
+    table.params td .opt {
+      font-size: 10px;
+      color: var(--muted);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 6px;
+      font-family: var(--font);
+    }
+
+    /* ── Code block ─────────────────────────── */
+    .code-wrap { border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+
+    .code-head {
+      background: #1a2535;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .code-head .lang {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+    }
+
+    .copy-btn {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      background: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+    .copy-btn.copied { color: #34d399; border-color: #34d399; }
+
+    pre.hljs {
+      margin: 0;
+      padding: 16px 18px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.75;
+      border-radius: 0;
+      overflow-x: auto;
+    }
+
+    /* ── Try it ─────────────────────────────── */
+    .try-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--amber);
+      background: var(--amber-light);
+      border: 1px solid var(--amber-border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      cursor: pointer;
+      margin-bottom: 18px;
+      transition: background 0.15s;
+      font-family: var(--font);
+    }
+
+    .try-btn:hover { background: #fde68a; }
+
+    .try-panel {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .try-panel.open { display: block; }
+
+    .try-fields { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+
+    .try-field { display: flex; flex-direction: column; gap: 5px; min-width: 180px; }
+
+    .try-field label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .try-field input,
+    .try-field select {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-family: var(--font);
+      background: #fff;
+      color: var(--text);
+      transition: border-color 0.15s;
+    }
+
+    .try-field input:focus,
+    .try-field select:focus {
+      outline: none;
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(217,119,6,0.1);
+    }
+
+    .send-btn {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background 0.15s;
+    }
+
+    .send-btn:hover { background: #1a3a5c; }
+    .send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .try-response { margin-top: 16px; }
+
+    .res-status {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .res-status.ok { color: var(--green); }
+    .res-status.err { color: #dc2626; }
+
+    /* ── Demo tables ────────────────────────── */
+    table.data {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 28px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table.data th {
+      text-align: left;
+      padding: 9px 14px;
+      background: var(--bg-subtle);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.data td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    table.data tr:last-child td { border-bottom: none; }
+
+    table.data td code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--purple);
+    }
+
+    .tier {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 9px;
+      border-radius: 12px;
+    }
+
+    .tier-gold { background: #fef3c7; color: #92400e; }
+    .tier-silver { background: #f1f5f9; color: #334155; }
+    .tier-standard { background: #f0fdf4; color: #166534; }
+
+    /* ── Scenarios ──────────────────────────── */
+    .scenario {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+    }
+
+    .scenario-q {
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .scenario-a {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .scenario-a code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: #e2e8f0;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--purple);
+    }
+
+    /* ── Status / Stock badges ──────────────── */
+    .sbadge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .s-delivered { background: #d1fae5; color: #065f46; }
+    .s-dispatched { background: #e0e7ff; color: #3730a3; }
+    .s-processing { background: #dbeafe; color: #1d4ed8; }
+    .s-pending { background: #fef9c3; color: #854d0e; }
+    .s-returned { background: #f1f5f9; color: #475569; }
+    .s-cancelled { background: #fee2e2; color: #991b1b; }
+
+    /* ── Divider / Note ─────────────────────── */
+    .note {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #1e40af;
+      margin-bottom: 20px;
+    }
+
+    /* ── Scrollbar ──────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── Sidebar ─────────────────────────── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="wordmark">Hartley <em>&amp;</em> Webb</div>
+      <div class="tag">Developer API</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Overview</div>
+      <a href="#introduction" class="nav-link active">Introduction</a>
+      <a href="#authentication" class="nav-link">Authentication</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Customers</div>
+      <a href="#customer-lookup" class="nav-link">Lookup customer</a>
+      <a href="#customer-get" class="nav-link">Get by ID</a>
+      <a href="#customer-orders" class="nav-link">Order history</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Orders</div>
+      <a href="#order-get" class="nav-link">Get order</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Products</div>
+      <a href="#products-list" class="nav-link">List &amp; search</a>
+      <a href="#product-get" class="nav-link">Get product</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Inventory</div>
+      <a href="#inventory-get" class="nav-link">Check stock</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Departments</div>
+      <a href="#departments-list" class="nav-link">List departments</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Demo Reference</div>
+      <a href="#demo-customers" class="nav-link">Customers</a>
+      <a href="#demo-scenarios" class="nav-link">Scenarios</a>
+    </div>
+  </nav>
+
+  <!-- ── Main content ────────────────────── -->
+  <main class="main">
+
+    <!-- Hero -->
+    <div class="hero" id="introduction">
+      <div class="hero-eyebrow">REST API &mdash; v1</div>
+      <h1 class="hero-title">Hartley &amp; Webb<br>Developer API</h1>
+      <p class="hero-subtitle">
+        A realistic retail API for a fictional British department store. Built for AI agent demos, integration testing, and prototyping customer service workflows.
+      </p>
+      <div class="base-url-pill">
+        <span class="label">Base URL</span>
+        <span class="url">https://hartley-webb-api.crombiec1.workers.dev</span>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="ic-label">Authentication</div>
+          <div class="ic-value">None required</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-label">Format</div>
+          <div class="ic-value">JSON</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-label">Infrastructure</div>
+          <div class="ic-value">Cloudflare Workers</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Authentication -->
+    <div class="section" id="authentication">
+      <h2 class="section-title">Authentication</h2>
+      <p class="section-desc">This API is open — no API keys or authentication headers are required. All endpoints are publicly accessible and intended for demo use.</p>
+      <div class="note">
+        All data is fictional. Customer names, phone numbers, and email addresses are made up for demonstration purposes.
+      </div>
+    </div>
+
+    <!-- ── Customers ──────────────────────── -->
+    <div class="section" id="customers">
+      <h2 class="section-title">Customers</h2>
+      <p class="section-desc">Look up customer profiles by phone number, email, or account number. Returns loyalty tier, address, and contact details.</p>
+    </div>
+
+    <!-- Lookup customer -->
+    <div class="endpoint" id="customer-lookup">
+      <div class="endpoint-bar">
+        <span class="method get">GET</span>
+        <span class="path">/api/customers</span>
+      </div>
+      <div class="endpoint-name">Lookup a customer</div>
+      <p class="endpoint-desc">Find a customer by phone number, email address, or account number. Pass one query parameter. Phone numbers are normalised — spaces, dashes, and +44 prefix are all handled.</p>
+
+      <div class="params-label">Query parameters</div>
+      <table class="params">
+        <thead><tr><th>Parameter</th><th>Type</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>phone <span class="opt">optional</span></td><td>string</td><td>UK mobile or landline number</td><td><code>07734521893</code></td></tr>
+          <tr><td>email <span class="opt">optional</span></td><td>string</td><td>Email address (case insensitive)</td><td><code>sarah.mitchell@gmail.com</code></td></tr>
+          <tr><td>account <span class="opt">optional</span></td><td>string</td><td>Hartley &amp; Webb account number</td><td><code>HW-100234</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Request</span><button class="copy-btn" data-copy="GET https://hartley-webb-api.crombiec1.workers.dev/api/customers?phone=07734521893">Copy</button></div>
+        <pre class="hljs"><code class="language-bash">GET /api/customers?phone=07734521893</code></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Response — 200 OK (found)</span></div>
+        <pre class="hljs"><code class="language-json">{
+  "found": true,
+  "customer": {
+    "id": "cust-001",
+    "account_number": "HW-100234",
+    "first_name": "Sarah",
+    "last_name": "Mitchell",
+    "email": "sarah.mitchell@gmail.com",
+    "phone": "07734 521893",
+    "address_line1": "45 Maple Road",
+    "city": "Bristol",
+    "postcode": "BS1 2AB",
+    "loyalty_points": 4820,
+    "tier": "gold",
+    "member_since": "2019-03-14"
+  }
+}</code></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Response — 200 OK (not found)</span></div>
+        <pre class="hljs"><code class="language-json">{
+  "found": false,
+  "customer": null
+}</code></pre>
+      </div>
+
+      <button class="try-btn" data-target="try-customer-lookup">▶ Try it</button>
+      <div class="try-panel" id="try-customer-lookup">
+        <div class="try-fields">
+          <div class="try-field">
+            <label>Search by</label>
+            <select id="lookup-type">
+              <option value="phone">Phone</option>
+              <option value="email">Email</option>
+              <option value="account">Account number</option>
+            </select>
+          </div>
+          <div class="try-field" style="flex:1; min-width:220px;">
+            <label>Value</label>
+            <input type="text" id="lookup-value" value="07734521893">
+          </div>
+        </div>
+        <button class="send-btn" onclick="runLookup()">Send request</button>
+        <div class="try-response" id="res-customer-lookup"></div>
+      </div>
+    </div>
+
+    <!-- Get customer by ID -->
+    <div class="endpoint" id="customer-get">
+      <div class="endpoint-bar">
+        <span class="method get">GET</span>
+        <span class="path">/api/customers/:id</span>
+      </div>
+      <div class="endpoint-name">Get customer by ID</div>
+      <p class="endpoint-desc">Returns a single customer by their internal ID. Use this after a lookup to fetch the full profile.</p>
+
+      <div class="params-label">Path parameters</div>
+      <table class="params">
+        <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>string</td><td>Internal customer ID — e.g. <code>cust-001</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Request</span></div>
+        <pre class="hljs"><code class="language-bash">GET /api/customers/cust-001</code></pre>
+      </div>
+
+      <button class="try-btn" data-target="try-customer-get">▶ Try it</button>
+      <div class="try-panel" id="try-customer-get">
+        <div class="try-fields">
+          <div class="try-field">
+            <label>Customer ID</label>
+            <input type="text" id="customer-id-val" value="cust-001">
+          </div>
+        </div>
+        <button class="send-btn" onclick="runPath('customer-id-val', '/api/customers/', 'res-customer-get')">Send request</button>
+        <div class="try-response" id="res-customer-get"></div>
+      </div>
+    </div>
+
+    <!-- Customer orders -->
+    <div class="endpoint" id="customer-orders">
+      <div class="endpoint-bar">
+        <span class="method get">GET</span>
+        <span class="path">/api/customers/:id/orders</span>
+      </div>
+      <div class="endpoint-name">Get customer order history</div>
+      <p class="endpoint-desc">Returns all orders placed by a customer, ordered most recent first, including a summary of the customer profile.</p>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Request</span></div>
+        <pre class="hljs"><code class="language-bash">GET /api/customers/cust-001/orders</code></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Response — 200 OK</span></div>
+        <pre class="hljs"><code class="language-json">{
+  "customer": {
+    "id": "cust-001",
+    "first_name": "Sarah",
+    "last_name": "Mitchell",
+    "account_number": "HW-100234"
+  },
+  "orders": [
+    {
+      "id": "HW-ORD-002",
+      "status": "dispatched",
+      "total_amount": 429.00,
+      "delivery_method": "standard",
+      "tracking_number": "HW-TRK-88291183",
+      "created_at": "2026-04-05 11:30:00"
+    }
+  ],
+  "total_orders": 3
+}</code></pre>
+      </div>
+
+      <button class="try-btn" data-target="try-customer-orders">▶ Try it</button>
+      <div class="try-panel" id="try-customer-orders">
+        <div class="try-fields">
+          <div class="try-field">
+            <label>Customer ID</label>
+            <input type="text" id="orders-id-val" value="cust-001">
+          </div>
+        </div>
+        <button class="send-btn" onclick="runCustomerOrders()">Send request</button>
+        <div class="try-response" id="res-customer-orders"></div>
+      </div>
+    </div>
+
+    <!-- ── Orders ─────────────────────────── -->
+    <div class="section" id="orders">
+      <h2 class="section-title">Orders</h2>
+      <p class="section-desc">Retrieve order details including all line items, delivery status, and tracking information.</p>
+    </div>
+
+    <!-- Get order -->
+    <div class="endpoint" id="order-get">
+      <div class="endpoint-bar">
+        <span class="method get">GET</span>
+        <span class="path">/api/orders/:id</span>
+      </div>
+      <div class="endpoint-name">Get order</div>
+      <p class="endpoint-desc">Returns a single order with all line items. Order IDs follow the format <code>HW-ORD-001</code>.</p>
+
+      <div class="params-label">Order statuses</div>
+      <table class="params" style="margin-bottom:20px;">
+        <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>pending</td><td>Order received, not yet processed</td></tr>
+          <tr><td>processing</td><td>Being picked and packed</td></tr>
+          <tr><td>dispatched</td><td>Shipped — tracking number available</td></tr>
+          <tr><td>delivered</td><td>Confirmed delivered</td></tr>
+          <tr><td>returned</td><td>Customer returned the order</td></tr>
+          <tr><td>cancelled</td><td>Order was cancelled</td></tr>
+        </tbody>
+      </table>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Request</span></div>
+        <pre class="hljs"><code class="language-bash">GET /api/orders/HW-ORD-001</code></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Response — 200 OK</span></div>
+        <pre class="hljs"><code class="language-json">{
+  "order": {
+    "id": "HW-ORD-001",
+    "customer_id": "cust-001",
+    "status": "delivered",
+    "total_amount": 1628.00,
+    "delivery_address": "45 Maple Road, Bristol, BS1 2AB",
+    "delivery_method": "express",
+    "tracking_number": "HW-TRK-88291047",
+    "created_at": "2026-03-01 09:15:00",
+    "updated_at": "2026-03-04 14:22:00",
+    "items": [
+      {
+        "product_id": "HW-E001",
+        "product_name": "Samsung 65\" QLED 4K Smart TV",
+        "quantity": 1,
+        "unit_price": 1299.00
+      },
+      {
+        "product_id": "HW-E002",
+        "product_name": "Sony WH-1000XM5 Wireless Headphones",
+        "quantity": 1,
+        "unit_price": 329.00
+      }
+    ]
+  }
+}</code></pre>
+      </div>
+
+      <button class="try-btn" data-target="try-order-get">▶ Try it</button>
+      <div class="try-panel" id="try-order-get">
+        <div class="try-fields">
+          <div class="try-field">
+            <label>Order ID</label>
+            <input type="text" id="order-id-val" value="HW-ORD-001">
+          </div>
+        </div>
+        <button class="send-btn" onclick="runPath('order-id-val', '/api/orders/', 'res-order-get')">Send request</button>
+        <div class="try-response" id="res-order-get"></div>
+      </div>
+    </div>
+
+    <!-- ── Products ───────────────────────── -->
+    <div class="section" id="products">
+      <h2 class="section-title">Products</h2>
+      <p class="section-desc">Browse and search across 35 products in 10 departments. Filter by department slug or free-text search across name, description, and brand.</p>
+    </div>
+
+    <!-- List products -->
+    <div class="endpoint" id="products-list">
+      <div class="endpoint-bar">
+        <span class="method get">GET</span>
+        <span class="path">/api/products</span>
+      </div>
+      <div class="endpoint-name">List &amp; search products</div>
+      <p class="endpoint-desc">Returns all products. Filter using <code>search</code> or <code>department</code> query parameters, or combine both.</p>
+
+      <div class="params-label">Query parameters</div>
+      <table class="params">
+        <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>search <span class="opt">optional</span></td><td>string</td><td>Full-text search across name, description, brand. Try: <code>dyson</code>, <code>lego</code>, <code>coffee</code></td></tr>
+          <tr><td>department <span class="opt">optional</span></td><td>string</td><td>Department slug — see <a href="#departments-list">departments</a> for full list</td></tr>
+        </tbody>
+      </table>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Request</span></div>
+        <pre class="hljs"><code class="language-bash">GET /api/products?department=electricals
+GET /api/products?search=coffee
+GET /api/products?department=beauty&search=elemis</code></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Response — 200 OK</span></div>
+        <pre class="hljs"><code class="language-json">{
+  "products": [
+    {
+      "id": "HW-E003",
+      "sku": "SKU-E003",
+      "name": "De'Longhi Magnifica Evo Coffee Machine",
+      "description": "Bean-to-cup coffee machine with LatteCrema system.",
+      "department_id": 1,
+      "department_name": "Electricals",
+      "brand": "De'Longhi",
+      "price": 649.00
+    }
+  ],
+  "count": 1
+}</code></pre>
+      </div>
+
+      <button class="try-btn" data-target="try-products-list">▶ Try it</button>
+      <div class="try-panel" id="try-products-list">
+        <div class="try-fields">
+          <div class="try-field">
+            <label>Search</label>
+            <input type="text" id="products-search" placeholder="e.g. coffee">
+          </div>
+          <div class="try-field">
+            <label>Department</label>
+            <select id="products-dept">
+              <option value="">All departments</option>
+              <option value="electricals">Electricals</option>
+              <option value="home-furniture">Home &amp; Furniture</option>
+              <option value="womens-fashion">Women's Fashion</option>
+              <option value="mens-fashion">Men's Fashion</option>
+              <option value="childrens">Children's</option>
+              <option value="beauty">Beauty &amp; Fragrance</option>
+              <option value="garden">Garden</option>
+              <option value="toys">Toys &amp; Games</option>
+              <option value="sports">Sports &amp; Leisure</option>
+              <option value="food">Food &amp; Beverage</option>
+            </select>
+          </div>
+        </div>
+        <button class="send-btn" onclick="runProducts()">Send request</button>
+        <div class="try-response" id="res-products-list"></div>
+      </div>
+    </div>
+
+    <!-- Get product -->
+    <div class="endpoint" id="product-get">
+      <div class="endpoint-bar">
+        <span class="method get">GET</span>
+        <span class="path">/api/products/:id</span>
+      </div>
+      <div class="endpoint-name">Get product</div>
+      <p class="endpoint-desc">Returns a single product by ID. Product IDs follow the pattern <code>HW-E001</code> (Electricals), <code>HW-H001</code> (Home), <code>HW-WF001</code> (Women's Fashion), etc.</p>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Request</span></div>
+        <pre class="hljs"><code class="language-bash">GET /api/products/HW-E005</code></pre>
+      </div>
+
+      <button class="try-btn" data-target="try-product-get">▶ Try it</button>
+      <div class="try-panel" id="try-product-get">
+        <div class="try-fields">
+          <div class="try-field">
+            <label>Product ID</label>
+            <input type="text" id="product-id-val" value="HW-E005">
+          </div>
+        </div>
+        <button class="send-btn" onclick="runPath('product-id-val', '/api/products/', 'res-product-get')">Send request</button>
+        <div class="try-response" id="res-product-get"></div>
+      </div>
+    </div>
+
+    <!-- ── Inventory ──────────────────────── -->
+    <div class="section" id="inventory">
+      <h2 class="section-title">Inventory</h2>
+      <p class="section-desc">Check real-time stock levels for any product. Returns status label, exact stock count, and warehouse location.</p>
+    </div>
+
+    <div class="endpoint" id="inventory-get">
+      <div class="endpoint-bar">
+        <span class="method get">GET</span>
+        <span class="path">/api/inventory/:productId</span>
+      </div>
+      <div class="endpoint-name">Check stock level</div>
+      <p class="endpoint-desc">Returns inventory status for a product. Stock statuses: <code>in_stock</code> (5+), <code>low_stock</code> (1–4), <code>out_of_stock</code> (0).</p>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Request</span></div>
+        <pre class="hljs"><code class="language-bash">GET /api/inventory/HW-E004</code></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Response — 200 OK</span></div>
+        <pre class="hljs"><code class="language-json">{
+  "inventory": {
+    "product_id": "HW-E004",
+    "product_name": "Dyson V15 Detect Cordless Vacuum",
+    "stock_level": 0,
+    "in_stock": false,
+    "status": "out_of_stock",
+    "status_label": "Out of stock",
+    "price": 649.00
+  }
+}</code></pre>
+      </div>
+
+      <button class="try-btn" data-target="try-inventory-get">▶ Try it</button>
+      <div class="try-panel" id="try-inventory-get">
+        <div class="try-fields">
+          <div class="try-field">
+            <label>Product ID</label>
+            <input type="text" id="inv-id-val" value="HW-E004">
+          </div>
+        </div>
+        <button class="send-btn" onclick="runPath('inv-id-val', '/api/inventory/', 'res-inventory-get')">Send request</button>
+        <div class="try-response" id="res-inventory-get"></div>
+      </div>
+    </div>
+
+    <!-- ── Departments ────────────────────── -->
+    <div class="section" id="departments">
+      <h2 class="section-title">Departments</h2>
+      <p class="section-desc">Returns all 10 departments with their slugs, used for filtering products.</p>
+    </div>
+
+    <div class="endpoint" id="departments-list">
+      <div class="endpoint-bar">
+        <span class="method get">GET</span>
+        <span class="path">/api/departments</span>
+      </div>
+      <div class="endpoint-name">List all departments</div>
+
+      <div class="code-wrap">
+        <div class="code-head"><span class="lang">Response — 200 OK</span></div>
+        <pre class="hljs"><code class="language-json">{
+  "departments": [
+    { "id": 1, "name": "Electricals",        "slug": "electricals" },
+    { "id": 2, "name": "Home & Furniture",   "slug": "home-furniture" },
+    { "id": 3, "name": "Women's Fashion",    "slug": "womens-fashion" },
+    { "id": 4, "name": "Men's Fashion",      "slug": "mens-fashion" },
+    { "id": 5, "name": "Children's",         "slug": "childrens" },
+    { "id": 6, "name": "Beauty & Fragrance", "slug": "beauty" },
+    { "id": 7, "name": "Garden",             "slug": "garden" },
+    { "id": 8, "name": "Toys & Games",       "slug": "toys" },
+    { "id": 9, "name": "Sports & Leisure",   "slug": "sports" },
+    { "id": 10,"name": "Food & Beverage",    "slug": "food" }
+  ]
+}</code></pre>
+      </div>
+
+      <button class="try-btn" data-target="try-departments">▶ Try it</button>
+      <div class="try-panel" id="try-departments">
+        <button class="send-btn" onclick="runFixed('/api/departments', 'res-departments')">Send request</button>
+        <div class="try-response" id="res-departments"></div>
+      </div>
+    </div>
+
+    <!-- ── Demo reference ─────────────────── -->
+    <div class="section" id="demo-customers">
+      <h2 class="section-title">Demo customers</h2>
+      <p class="section-desc">Twelve fictional UK customers across Gold, Silver, and Standard loyalty tiers. Use any of these to test customer lookup and order history endpoints.</p>
+
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Account</th>
+            <th>Phone</th>
+            <th>Tier</th>
+            <th>Notable</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Sarah Mitchell</td><td><code>HW-100234</code></td><td><code>07734 521893</code></td><td><span class="tier tier-gold">Gold</span></td><td>Has a returned order</td></tr>
+          <tr><td>James Thornton</td><td><code>HW-100235</code></td><td><code>07891 234567</code></td><td><span class="tier tier-silver">Silver</span></td><td>Order in processing</td></tr>
+          <tr><td>Emma Clarke</td><td><code>HW-100236</code></td><td><code>07654 321098</code></td><td><span class="tier tier-standard">Standard</span></td><td>&mdash;</td></tr>
+          <tr><td>David Patel</td><td><code>HW-100237</code></td><td><code>07712 345678</code></td><td><span class="tier tier-gold">Gold</span></td><td>High spender</td></tr>
+          <tr><td>Charlotte Hughes</td><td><code>HW-100238</code></td><td><code>07823 456789</code></td><td><span class="tier tier-standard">Standard</span></td><td>Has a cancelled order</td></tr>
+          <tr><td>Michael Bennett</td><td><code>HW-100239</code></td><td><code>07934 567890</code></td><td><span class="tier tier-silver">Silver</span></td><td>Click &amp; collect order</td></tr>
+          <tr><td>Sophie Williams</td><td><code>HW-100240</code></td><td><code>07845 678901</code></td><td><span class="tier tier-standard">Standard</span></td><td>&mdash;</td></tr>
+          <tr><td>Robert Davies</td><td><code>HW-100241</code></td><td><code>07756 789012</code></td><td><span class="tier tier-gold">Gold</span></td><td>Order currently processing</td></tr>
+          <tr><td>Olivia Johnson</td><td><code>HW-100242</code></td><td><code>07867 890123</code></td><td><span class="tier tier-standard">Standard</span></td><td>Has a returned order</td></tr>
+          <tr><td>Thomas Wilson</td><td><code>HW-100243</code></td><td><code>07978 901234</code></td><td><span class="tier tier-silver">Silver</span></td><td>Order placed today</td></tr>
+          <tr><td>Isabella Moore</td><td><code>HW-100244</code></td><td><code>07689 012345</code></td><td><span class="tier tier-standard">Standard</span></td><td>New customer</td></tr>
+          <tr><td>William Taylor</td><td><code>HW-100245</code></td><td><code>07590 123456</code></td><td><span class="tier tier-gold">Gold</span></td><td>9,870 loyalty points</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Demo scenarios -->
+    <div class="section" id="demo-scenarios">
+      <h2 class="section-title">Demo scenarios</h2>
+      <p class="section-desc">Pre-built scenarios for testing AI agent conversations. Each is designed to exercise a different part of the API.</p>
+
+      <div class="scenario">
+        <div class="scenario-q">"Where is my order?"</div>
+        <div class="scenario-a">Sarah Mitchell — order <code>HW-ORD-002</code> is dispatched with tracking <code>HW-TRK-88291183</code>. Look up by phone <code>07734 521893</code>.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-q">"I want to return something"</div>
+        <div class="scenario-a">Olivia Johnson — already has a returned order <code>HW-ORD-018</code> (Phase Eight dress). Phone <code>07867 890123</code>.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-q">"Is the Dyson in stock?"</div>
+        <div class="scenario-a">Product <code>HW-E004</code> (Dyson V15 Detect) — currently <strong>out of stock</strong>. Good for testing out-of-stock messaging.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-q">"My order was cancelled"</div>
+        <div class="scenario-a">Charlotte Hughes — order <code>HW-ORD-013</code> was cancelled (garden furniture set, £799). Phone <code>07823 456789</code>.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-q">"I'm a loyal customer"</div>
+        <div class="scenario-a">William Taylor — Gold tier, 9,870 loyalty points, member since 2016. Account <code>HW-100245</code>.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-q">"I'm a new customer"</div>
+        <div class="scenario-a">Isabella Moore — joined August 2024, only one order. Phone <code>07689 012345</code>.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-q">"I ordered by click &amp; collect"</div>
+        <div class="scenario-a">Michael Bennett — order <code>HW-ORD-007</code> was click &amp; collect (Ted Baker jacket + Paul Smith shirt). Phone <code>07934 567890</code>.</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const BASE = 'https://hartley-webb-api.crombiec1.workers.dev'
+
+  // ── Try it toggles ──────────────────────────────────
+  document.querySelectorAll('.try-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panel = document.getElementById(btn.dataset.target)
+      const open = panel.classList.toggle('open')
+      btn.textContent = open ? '▼ Close' : '▶ Try it'
+    })
+  })
+
+  // ── Copy buttons ────────────────────────────────────
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.copy || btn.closest('.code-wrap').querySelector('code').textContent
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!'
+        btn.classList.add('copied')
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied') }, 1500)
+      })
+    })
+  })
+
+  // ── Active nav tracking ─────────────────────────────
+  const sections = document.querySelectorAll('[id]')
+  const navLinks = document.querySelectorAll('.nav-link')
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'))
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`)
+        if (active) active.classList.add('active')
+      }
+    })
+  }, { rootMargin: '-20% 0px -70% 0px' })
+
+  sections.forEach(s => observer.observe(s))
+
+  // ── Helpers ─────────────────────────────────────────
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+  }
+
+  async function fetchAndDisplay(url, responseEl) {
+    const el = document.getElementById(responseEl)
+    el.innerHTML = '<div style="color:#64748b;font-size:13px">Sending…</div>'
+    try {
+      const res = await fetch(url)
+      const data = await res.json()
+      const json = JSON.stringify(data, null, 2)
+      el.innerHTML = `
+        <div class="res-status ${res.ok ? 'ok' : 'err'}">
+          ${res.ok ? '✓' : '✗'} ${res.status} ${res.statusText}
+        </div>
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">Response</span></div>
+          <pre class="hljs"><code class="language-json">${escHtml(json)}</code></pre>
+        </div>`
+      el.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block))
+    } catch (e) {
+      el.innerHTML = `<div class="res-status err">✗ ${e.message}</div>`
+    }
+  }
+
+  // ── Try it runners ───────────────────────────────────
+  function runLookup() {
+    const type  = document.getElementById('lookup-type').value
+    const value = document.getElementById('lookup-value').value.trim()
+    if (!value) return
+    fetchAndDisplay(`${BASE}/api/customers?${type}=${encodeURIComponent(value)}`, 'res-customer-lookup')
+  }
+
+  function runPath(inputId, pathPrefix, responseEl) {
+    const val = document.getElementById(inputId).value.trim()
+    if (!val) return
+    fetchAndDisplay(`${BASE}${pathPrefix}${encodeURIComponent(val)}`, responseEl)
+  }
+
+  function runCustomerOrders() {
+    const val = document.getElementById('orders-id-val').value.trim()
+    if (!val) return
+    fetchAndDisplay(`${BASE}/api/customers/${encodeURIComponent(val)}/orders`, 'res-customer-orders')
+  }
+
+  function runProducts() {
+    const search = document.getElementById('products-search').value.trim()
+    const dept   = document.getElementById('products-dept').value
+    const qs = []
+    if (search) qs.push(`search=${encodeURIComponent(search)}`)
+    if (dept)   qs.push(`department=${encodeURIComponent(dept)}`)
+    fetchAndDisplay(`${BASE}/api/products${qs.length ? '?' + qs.join('&') : ''}`, 'res-products-list')
+  }
+
+  function runFixed(path, responseEl) {
+    fetchAndDisplay(`${BASE}${path}`, responseEl)
+  }
+
+  // Update lookup placeholder based on type
+  document.getElementById('lookup-type').addEventListener('change', e => {
+    const map = { phone: '07734521893', email: 'sarah.mitchell@gmail.com', account: 'HW-100234' }
+    document.getElementById('lookup-value').value = map[e.target.value] || ''
+  })
+
+  // Init highlight
+  hljs.highlightAll()
+</script>
+</body>
+</html>
